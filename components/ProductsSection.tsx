@@ -14,11 +14,11 @@ import Heading from "./Heading";
 
 const ProductsSection = async () => {
   let products: any[] = [];
-  let debugError = "";
 
-  const apiUrl =
+  const apiUrl = (
     process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "https://singhtronic-ecommerce.onrender.com";
+    "https://singhtronic-ecommerce.onrender.com"
+  ).replace(/\/+$/, "");
 
   try {
     const res = await fetch(`${apiUrl}/api/products`, {
@@ -28,14 +28,12 @@ const ProductsSection = async () => {
       },
     });
 
-    if (!res.ok) {
-      debugError = `HTTP ${res.status}: ${res.statusText} from ${apiUrl}/api/products`;
-    } else {
+    if (res.ok) {
       const result = await res.json();
       products = Array.isArray(result) ? result : [];
     }
-  } catch (error: any) {
-    debugError = `${error?.message || String(error)} (URL: ${apiUrl}/api/products)`;
+  } catch (error) {
+    console.error("Error fetching products:", error);
   }
 
   return (
@@ -50,11 +48,6 @@ const ProductsSection = async () => {
           ) : (
             <div className="col-span-full text-center text-white py-10">
               <p>No products available at the moment.</p>
-              {debugError && (
-                <p className="text-sm mt-2 bg-red-800/60 p-2 rounded">
-                  Debug: {debugError}
-                </p>
-              )}
             </div>
           )}
         </div>

@@ -44,9 +44,10 @@ const Products = async ({
   }
 
   let products: any[] = [];
-  const apiUrl =
+const apiUrl = (
     process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "https://singhtronic-ecommerce.onrender.com";
+    "https://singhtronic-ecommerce.onrender.com"
+  ).replace(/\/+$/, "");
 
   try {
     const slugFilter =
