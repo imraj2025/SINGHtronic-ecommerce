@@ -15,21 +15,21 @@ import apiClient from "@/lib/api";
 
 const ProductsSection = async () => {
   let products = [];
-  
+
   try {
-    // sending API request for getting all products
-    const data = await apiClient.get("/api/products");
-    
+    const data = await apiClient.get("/api/products", {
+      cache: "no-store",
+    });
+
     if (!data.ok) {
-      console.error('Failed to fetch products:', data.statusText);
+      console.error("Failed to fetch products:", data.statusText);
       products = [];
     } else {
       const result = await data.json();
-      // Ensure products is an array
       products = Array.isArray(result) ? result : [];
     }
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     products = [];
   }
 
