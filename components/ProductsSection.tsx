@@ -11,26 +11,31 @@
 import React from "react";
 import ProductItem from "./ProductItem";
 import Heading from "./Heading";
-import apiClient from "@/lib/api";
 
 const ProductsSection = async () => {
-  let products = [];
+  let products: any[] = [];
+  let debugError = "";
+
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "https://singhtronic-ecommerce.onrender.com";
 
   try {
-    const data = await apiClient.get("/api/products", {
+    const res = await fetch(`${apiUrl}/api/products`, {
       cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    if (!data.ok) {
-      console.error("Failed to fetch products:", data.statusText);
-      products = [];
+    if (!res.ok) {
+      debugError = `HTTP ${res.status}: ${res.statusText} from ${apiUrl}/api/products`;
     } else {
-      const result = await data.json();
+      const result = await res.json();
       products = Array.isArray(result) ? result : [];
     }
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    products = [];
+  } catch (error: any) {
+    debugError = `${error?.message || String(error)} (URL: ${apiUrl}/api/products)`;
   }
 
   return (
@@ -45,6 +50,11 @@ const ProductsSection = async () => {
           ) : (
             <div className="col-span-full text-center text-white py-10">
               <p>No products available at the moment.</p>
+              {debugError && (
+                <p className="text-sm mt-2 bg-red-800/60 p-2 rounded">
+                  Debug: {debugError}
+                </p>
+              )}
             </div>
           )}
         </div>

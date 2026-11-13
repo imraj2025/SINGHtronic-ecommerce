@@ -10,18 +10,23 @@
 
 import React from "react";
 import ProductItem from "./ProductItem";
-import apiClient from "@/lib/api";
 
 const Products = async ({
   params,
   searchParams,
 }: {
-  params: { slug?: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: any;
+  searchParams: any;
 }) => {
-  const inStockNum = searchParams?.inStock === "true" ? 1 : 0;
-  const outOfStockNum = searchParams?.outOfStock === "true" ? 1 : 0;
-  const page = searchParams?.page ? Number(searchParams?.page) : 1;
+  // Support both Next.js 14 objects and Next.js 15/16 Promises
+  const resolvedParams = await Promise.resolve(params);
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+
+  const inStockNum = resolvedSearchParams?.inStock === "true" ? 1 : 0;
+  const outOfStockNum = resolvedSearchParams?.outOfStock === "true" ? 1 : 0;
+  const page = resolvedSearchParams?.page
+    ? Number(resolvedSearchParams?.page)
+    : 1;
 
   let stockMode: string = "lte";
 
@@ -38,27 +43,31 @@ const Products = async ({
     stockMode = "lte";
   }
 
-  let products = [];
+  let products: any[] = [];
+  const apiUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "https://singhtronic-ecommerce.onrender.com";
 
   try {
-    const data = await apiClient.get(
-      `/api/products?filters[price][$lte]=${
-        searchParams?.price || 3000
-      }&filters[rating][$gte]=${
-        Number(searchParams?.rating) || 0
-      }&filters[inStock][$${stockMode}]=1&${
-        params?.slug?.length! > 0
-          ? `filters[category][$equals]=${params?.slug}&`
-          : ""
-      }sort=${searchParams?.sort}&page=${page}`,
-      { cache: "no-store" }
-    );
+    const slugFilter =
+      resolvedParams?.slug && resolvedParams.slug.length > 0
+        ? `filters[category][$equals]=${resolvedParams.slug}&`
+        : "";
 
-    if (!data.ok) {
-      console.error("Failed to fetch products:", data.statusText);
-      products = [];
-    } else {
-      const result = await data.json();
+    const url = `${apiUrl}/api/products?filters[price][$lte]=${
+      resolvedSearchParams?.price || 3000
+    }&filters[rating][$gte]=${
+      Number(resolvedSearchParams?.rating) || 0
+    }&filters[inStock][$${stockMode}]=1&${slugFilter}sort=${
+      resolvedSearchParams?.sort || "defaultSort"
+    }&page=${page}`;
+
+    const res = await fetch(url, {
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      const result = await res.json();
       products = Array.isArray(result) ? result : [];
     }
   } catch (error) {
