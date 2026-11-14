@@ -54,7 +54,7 @@ const ProductItem = ({
             : "text-lg text-white font-semibold"
         }
       >
-        ${product.price}
+        ₹{Number(product.price).toLocaleString("en-IN")}
       </p>
 
   

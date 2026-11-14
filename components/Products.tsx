@@ -36,12 +36,12 @@ const Products = async ({
   if (outOfStockNum === 1) {
     stockMode = "lt";
   }
-  if (inStockNum === 1 && outOfStockNum === 1) {
-    stockMode = "lte";
-  }
-  if (inStockNum === 0 && outOfStockNum === 0) {
-    stockMode = "lte";
-  }
+if (inStockNum === 1) {
+  stockMode = "gte";
+}
+if (inStockNum === 0 && outOfStockNum === 0) {
+  stockMode = "gte";
+}
 
   let products: any[] = [];
 const apiUrl = (
@@ -56,7 +56,7 @@ const apiUrl = (
         : "";
 
     const url = `${apiUrl}/api/products?filters[price][$lte]=${
-      resolvedSearchParams?.price || 3000
+      resolvedSearchParams?.price || 200000
     }&filters[rating][$gte]=${
       Number(resolvedSearchParams?.rating) || 0
     }&filters[inStock][$${stockMode}]=1&${slugFilter}sort=${
