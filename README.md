@@ -28,7 +28,7 @@
 
 | Layer | Technology | Hosting Provider | Production Endpoint |
 | :--- | :--- | :--- | :--- |
-| **Frontend & SSR** | Next.js 15, React, TypeScript, Tailwind CSS, DaisyUI | **Vercel** | [singhtronic-ecommerce.vercel.app](https://singhtronic-ecommerce.vercel.app) |
+| **Frontend & SSR** | Next.js 15, React, TypeScript, Tailwind CSS, DaisyUI | **Vercel** | [singhtronic-ecommerce.vercel.app](https://sing-htronic-ecommerce-amber.vercel.app/) |
 | **Backend REST API** | Node.js, Express.js, Rate Limiter, CORS | **Render** | [singhtronic-ecommerce.onrender.com](https://singhtronic-ecommerce.onrender.com/api/products) |
 | **Database & ORM** | MySQL (TLS/SSL Strict), Prisma ORM | **TiDB Cloud** | AWS Regional Serverless Cluster |
 
